@@ -32,7 +32,7 @@ def gendata(number):
 	_, contours, _ = cv.findContours(img, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 	for cnt in contours:
 	    [x,y,w,h] = cv.boundingRect(cnt)
-    	if(h>15):
+    	if(h > 15 and w > 5 and x > padding/2 and y > padding/2):
 		    # cv.rectangle(img,(x,y),(x+w,y+h),(255,255,255),1)
 		    roi = img[y:y+h,x:x+w]
 		    roismall = cv.resize(roi,(50,50))
@@ -41,10 +41,9 @@ def gendata(number):
 		    res = np.append(res, roismall.ravel())
 		    np.savetxt(f, [res], delimiter=',', fmt='%u')
 
-for x in range(0, 10):
+for x in range(1, 10):
 	gendata(x)
-# for x in range(0, 10):
-# 	gendata(x)
+	
 print("Generate data completed")
 
 f.close()

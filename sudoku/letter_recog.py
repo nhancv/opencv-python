@@ -148,25 +148,14 @@ def saveData(data, number=10):
     res = np.append(res, data)
     np.savetxt("n%s.data" % number, [res], delimiter=',', fmt='%u')
 
-def recogDigit(box):
-    _, contours, _ = cv.findContours(box, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    for cnt in contours:
-        [x,y,w,h] = cv.boundingRect(cnt)
-        if(h>15):
-            # cv.rectangle(box,(x,y),(x+w,y+h),(255,255,255),1)
-            roi = box[y:y+h,x:x+w]
-            roi = cv.resize(roi,(50,50))
-            # cv.imshow('roi', roi)
-            return recog(roi)
-    return 10
-
-def recog(roi):
+def recog(roi, save = False, num = 10):
     model = SVM()
     samples, responses = load_base('./digits.data')
     model.train(samples, responses)
     #verify
     verify = np.float32(np.array([roi.ravel()]))
-    # saveData(verify, 5)
+    if(save == True):
+        saveData(verify, num)
 
     result = model.predict(verify)[0]
     return result
@@ -177,7 +166,7 @@ def recogBoard(board):
     model.train(samples, responses)
     #verify
     verify = np.float32(board)
-    # saveData(verify, 5)
+    # saveData(verify, 1)
 
     result = model.predict(verify)
     return result

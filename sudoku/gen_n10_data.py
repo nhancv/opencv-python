@@ -8,10 +8,12 @@ def gendata():
 	img = np.zeros((50, 50, 3), np.uint8)*255
 	img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 	roi = img[:,:]
-	res = np.array([10])
-	res = np.append(res, roi)
-	np.savetxt(fileName, [res], delimiter=',', fmt='%u')
+	roi_1 = np.append([10], roi)
+	roi_2 = np.append([10], cv.bitwise_not(roi))
+	res = np.array([roi_1,roi_2])
+	np.savetxt(fileName, res, delimiter=',', fmt='%u')
 	print("Generate data completed")
+	# [10, cv.bitwise_not(roi)]])
 
 gendata()
 
