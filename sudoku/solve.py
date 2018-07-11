@@ -17,25 +17,20 @@ outerBox = cv.bitwise_not(outerBox)
 
 # cv.imshow('outerBox', outerBox)
 
-y=2
-x=4
+y=0
+x=3
 box = outerBox[cellH*y + padding:cellH*(y+1) - padding, cellW*x + padding:cellW*(x+1) - padding]
 # cv.imshow('box', box)
-_, contours, _ = cv.findContours(box, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-for cnt in contours:
-    [x,y,w,h] = cv.boundingRect(cnt)
-    if(h>15):
-	    # cv.rectangle(box,(x,y),(x+w,y+h),(255,255,255),1)
-	    roi = box[y:y+h,x:x+w]
-	    roismall = cv.resize(roi,(50,50))
-	    cv.imshow('roismall', roismall)
-	    letter_recog.recog(roismall)
 
+# res = letter_recog.recogDigit(box)
+# print(res)
 
-for x in range(0, 9):
-	box = outerBox[cellH*x:cellH*(x+1), cellW*x:cellW*(x+1)]
-
-	# cv.imshow("box {0}".format(x+1), outerBox[cellH*x:cellH*(x+1), cellW*x:cellW*(x+1)])
+for i in range(0, 9):
+	for j in range(0, 9):
+		box = outerBox[cellH*i + padding:cellH*(i+1) - padding, cellW*j + padding:cellW*(j+1) - padding]
+		res = letter_recog.recogDigit(box)
+		print(res)
+		# cv.imshow("box {0}".format(x+1), outerBox[cellH*x:cellH*(x+1), cellW*x:cellW*(x+1)])
 
 cv.waitKey(0)
 cv.destroyAllWindows()

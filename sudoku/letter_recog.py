@@ -38,7 +38,7 @@ def load_base(fn):
 
 class LetterStatModel(object):
     class_n = 26
-    train_ratio = 1
+    train_ratio = 0.5
 
     def load(self, fn):
         self.model.load(fn)
@@ -148,26 +148,28 @@ def saveData(data, number=10):
     res = np.append(res, data)
     np.savetxt("n%s.data" % number, [res], delimiter=',', fmt='%u')
 
-def recog(box):
+def recogDigit(box):
+    _, contours, _ = cv.findContours(box, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+        [x,y,w,h] = cv.boundingRect(cnt)
+        if(h>15):
+            # cv.rectangle(box,(x,y),(x+w,y+h),(255,255,255),1)
+            roi = box[y:y+h,x:x+w]
+            roi = cv.resize(roi,(50,50))
+            # cv.imshow('roi', roi)
+            return recog(roi)
+    return 10
 
+def recog(roi):
     model = SVM()
-    # model.load('svm_model.dat')
     samples, responses = load_base('./digits.data')
-    print(samples.shape, responses)
-    train_n = int(len(samples)*model.train_ratio)
-    model.train(samples[:train_n], responses[:train_n])
-    train_rate = np.mean(model.predict(samples[:train_n]) == responses[:train_n].astype(int))
-    # test_rate  = np.mean(model.predict(samples[train_n:]) == responses[train_n:].astype(int))
-    # print('train rate: %f  test rate: %f' % (train_rate*100, test_rate*100))
-
-    verify = np.float32(np.array([box.ravel()]))
+    model.train(samples, responses)
+    #verify
+    verify = np.float32(np.array([roi.ravel()]))
     # saveData(verify, 5)
 
-    result = model.predict(verify)
-    print(result)
-
-
-    # print(res)
+    result = model.predict(verify)[0]
+    return result
 
 
 if __name__ == '__main__':
@@ -178,7 +180,6 @@ if __name__ == '__main__':
 
     models = [RTrees, KNearest, Boost, SVM, MLP] # NBayes
     models = dict( [(cls.__name__.lower(), cls) for cls in models] )
-
 
     args, dummy = getopt.getopt(sys.argv[1:], '', ['model=', 'data=', 'load=', 'save='])
     args = dict(args)
