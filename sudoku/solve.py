@@ -15,12 +15,12 @@ gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 outerBox = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 5, 2)
 outerBox = cv.bitwise_not(outerBox)
 
-cv.imshow('outerBox', outerBox)
+# cv.imshow('outerBox', outerBox)
 
-y=0
-x=0
+y=2
+x=4
 box = outerBox[cellH*y + padding:cellH*(y+1) - padding, cellW*x + padding:cellW*(x+1) - padding]
-cv.imshow('box', box)
+# cv.imshow('box', box)
 _, contours, _ = cv.findContours(box, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 for cnt in contours:
     [x,y,w,h] = cv.boundingRect(cnt)
@@ -28,7 +28,7 @@ for cnt in contours:
 	    # cv.rectangle(box,(x,y),(x+w,y+h),(255,255,255),1)
 	    roi = box[y:y+h,x:x+w]
 	    roismall = cv.resize(roi,(50,50))
-	    cv.imshow('roismall', roi)
+	    cv.imshow('roismall', roismall)
 	    letter_recog.recog(roismall)
 
 

@@ -36,7 +36,7 @@ def gendata(number):
 		    # cv.rectangle(img,(x,y),(x+w,y+h),(255,255,255),1)
 		    roi = img[y:y+h,x:x+w]
 		    roismall = cv.resize(roi,(50,50))
-		    cv.imshow('roismall', roismall)
+		    # cv.imshow('roismall', roismall)
 		    res = np.array([number])
 		    res = np.append(res, roismall.ravel())
 		    np.savetxt(f, [res], delimiter=',', fmt='%u')
@@ -50,4 +50,4 @@ print("Generate data completed")
 f.close()
 
 
-cv.waitKey(0)
+# cv.waitKey(0)

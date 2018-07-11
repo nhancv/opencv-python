@@ -143,6 +143,11 @@ class MLP(LetterStatModel):
         _ret, resp = self.model.predict(samples)
         return resp.argmax(-1)
 
+def saveData(data, number=10):
+    res = np.array([number])
+    res = np.append(res, data)
+    np.savetxt("n%s.data" % number, [res], delimiter=',', fmt='%u')
+
 def recog(box):
 
     model = SVM()
@@ -155,14 +160,11 @@ def recog(box):
     # test_rate  = np.mean(model.predict(samples[train_n:]) == responses[train_n:].astype(int))
     # print('train rate: %f  test rate: %f' % (train_rate*100, test_rate*100))
 
-    number = 1
-    testing = np.float32(np.array([box.ravel()]))
-    res = np.array([number])
-    res = np.append(res, testing.ravel())
-    np.savetxt("n%s.data" % number, [res], delimiter=',', fmt='%u')
-    
-    verify = model.predict(testing)
-    print(verify)
+    verify = np.float32(np.array([box.ravel()]))
+    # saveData(verify, 5)
+
+    result = model.predict(verify)
+    print(result)
 
 
     # print(res)
