@@ -171,6 +171,16 @@ def recog(roi):
     result = model.predict(verify)[0]
     return result
 
+def recogBoard(board):
+    model = SVM()
+    samples, responses = load_base('./digits.data')
+    model.train(samples, responses)
+    #verify
+    verify = np.float32(board)
+    # saveData(verify, 5)
+
+    result = model.predict(verify)
+    return result
 
 if __name__ == '__main__':
     import getopt
