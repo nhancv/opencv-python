@@ -32,13 +32,13 @@ import numpy as np
 import cv2 as cv
 
 def load_base(fn):
-    a = np.loadtxt(fn, np.float32, delimiter=',', converters={ 0 : lambda ch : ord(ch)-ord('A') })
+    a = np.loadtxt(fn, np.float32, delimiter=',')
     samples, responses = a[:,1:], a[:,0]
     return samples, responses
 
 class LetterStatModel(object):
     class_n = 26
-    train_ratio = 0.5
+    train_ratio = 1
 
     def load(self, fn):
         self.model.load(fn)
@@ -143,6 +143,29 @@ class MLP(LetterStatModel):
         _ret, resp = self.model.predict(samples)
         return resp.argmax(-1)
 
+def recog(box):
+
+    model = SVM()
+    # model.load('svm_model.dat')
+    samples, responses = load_base('./digits.data')
+    print(samples.shape, responses)
+    train_n = int(len(samples)*model.train_ratio)
+    model.train(samples[:train_n], responses[:train_n])
+    train_rate = np.mean(model.predict(samples[:train_n]) == responses[:train_n].astype(int))
+    # test_rate  = np.mean(model.predict(samples[train_n:]) == responses[train_n:].astype(int))
+    # print('train rate: %f  test rate: %f' % (train_rate*100, test_rate*100))
+
+    number = 1
+    testing = np.float32(np.array([box.ravel()]))
+    res = np.array([number])
+    res = np.append(res, testing.ravel())
+    np.savetxt("n%s.data" % number, [res], delimiter=',', fmt='%u')
+    
+    verify = model.predict(testing)
+    print(verify)
+
+
+    # print(res)
 
 
 if __name__ == '__main__':
@@ -158,7 +181,7 @@ if __name__ == '__main__':
     args, dummy = getopt.getopt(sys.argv[1:], '', ['model=', 'data=', 'load=', 'save='])
     args = dict(args)
     args.setdefault('--model', 'svm')
-    args.setdefault('--data', '../data/letter-recognition.data')
+    args.setdefault('--data', './digits.data')
 
     print('loading data %s ...' % args['--data'])
     samples, responses = load_base(args['--data'])
