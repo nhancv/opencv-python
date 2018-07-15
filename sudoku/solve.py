@@ -12,7 +12,7 @@ def preprocessImg(image):
 	# gray = cv.GaussianBlur(gray, (11, 11), 0)
 	# outerBox = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 5, 2)
 	ret,thresh = cv.threshold(gray,128,255,cv.THRESH_BINARY)
-	cv.imshow('thresh', thresh)
+	# cv.imshow('thresh', thresh)
 	outerBox = cv.bitwise_not(thresh)
 	cv.imshow('BitwiseNot', outerBox)
 	return outerBox
@@ -32,8 +32,8 @@ def getRoi(box):
             roi = cv.resize(roi,(50,50))
 
             #draw bounding rect
-            # roir = cv.rectangle(np.copy(box),(x,y),(x+w,y+h),(255,0,0),1)
-            # cv.imshow('box', roir)
+            roir = cv.rectangle(np.copy(box),(x,y),(x+w,y+h),(255,0,0),1)
+            # cv.imshow('roir', roir)
             
             return roi
     return n10()
@@ -68,7 +68,7 @@ def decorBoard2Img(img, originBoard, solveBoard):
 				textX = (cellW - textsize[0]) / 2 + cellW*j
 				textY = (cellH + textsize[1]) / 2 + cellH*i
 				# add text centered on image
-				cv.putText(img, text, (textX, textY ), font, 1, (0, 0, 0), 2)
+				cv.putText(img, text, (textX, textY ), font, 1, (255, 0, 0), 2)
 	cv.imshow('FinalImg', img)
 
 
@@ -89,7 +89,8 @@ if __name__ == '__main__':
 			box = getBox(outerBox, i,j)
 			roi = getRoi(box)
 			imgBoard = np.append(imgBoard, [roi.ravel()], axis=0)
-			# cv.imshow("box {0}x{1}".format(i, j), roi)
+			# cv.imshow("box {0}x{1}".format(i, j), box)
+			# cv.imshow("roi {0}x{1}".format(i, j), roi)
 
 	board = letter_recog.recogBoard(imgBoard)
 	board = np.reshape(board, (-1, 9 if len(board) > 9 else len(board)))
