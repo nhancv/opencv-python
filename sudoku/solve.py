@@ -28,6 +28,11 @@ def getRoi(box):
         if(h > 15 and w > 5 and x > padding/2 and y > padding/2):
             roi = box[y:y+h,x:x+w]
             roi = cv.resize(roi,(50,50))
+
+            #draw bounding rect
+            # roir = cv.rectangle(np.copy(box),(x,y),(x+w,y+h),(255,0,0),1)
+            # cv.imshow('box', roir)
+            
             return roi
     return n10()
 
@@ -37,6 +42,33 @@ def getBox(img, i, j):
 	cellH = height/9
 	box = img[cellH*i + padding:cellH*(i+1) - padding, cellW*j + padding:cellW*(j+1) - padding]
 	return box
+
+def decorBoard2Img(img, originBoard, solveBoard):
+	height, width, channels = image.shape
+	cellW = width/9
+	cellH = height/9
+	for i in range(0, 9):
+		for j in range(0, 9):
+			if(originBoard[i][j] == 0):
+				# setup text
+				font = cv.FONT_HERSHEY_SIMPLEX
+				font_scale = 0.55
+				margin = 5
+				thickness = 2
+				color = (255, 255, 255)
+
+				text = str(int(solveBoard[i][j]))
+				size = cv.getTextSize(text, font, font_scale, thickness)
+
+				# get boundary of this text
+				textsize = cv.getTextSize(text, font, 1, 2)[0]
+				# get coords based on boundary
+				textX = (cellW - textsize[0]) / 2 + cellW*j
+				textY = (cellH + textsize[1]) / 2 + cellH*i
+				# add text centered on image
+				cv.putText(img, text, (textX, textY ), font, 1, (0, 0, 0), 2)
+	cv.imshow('FinalImg', img)
+
 
 if __name__ == '__main__':
 	import getopt
@@ -63,9 +95,11 @@ if __name__ == '__main__':
 	print(board)
 
 	#find solution depend on board
-	if(su_board.solveSDKBoard(board) == True):
+	resBoard = np.copy(board)
+	if(su_board.solveSDKBoard(resBoard) == True):
 		print('result:')
-		print(board)
+		print(resBoard)
+		decorBoard2Img(image, board, resBoard)
 	else:
 		print('no solution')
 
