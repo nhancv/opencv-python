@@ -70,4 +70,13 @@ result = np.reshape(result, (-1, 9 if len(result) > 9 else len(result)))
 result = np.vectorize(lambda t: 0 if t == 10 else t)(result)
 print(result)
 
+
+
+
+
+
+
+
+
+
 cv.waitKey(0)
