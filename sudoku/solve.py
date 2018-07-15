@@ -8,11 +8,13 @@ padding = 5
 
 def preprocessImg(image):
 	gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+	cv.imshow('gray', gray)
 	# gray = cv.GaussianBlur(gray, (11, 11), 0)
 	# outerBox = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 5, 2)
 	ret,thresh = cv.threshold(gray,128,255,cv.THRESH_BINARY)
+	cv.imshow('thresh', thresh)
 	outerBox = cv.bitwise_not(thresh)
-	cv.imshow('thresh', outerBox)
+	cv.imshow('BitwiseNot', outerBox)
 	return outerBox
 
 def n10():
